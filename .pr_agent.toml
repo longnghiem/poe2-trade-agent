@@ -1,0 +1,63 @@
+# .pr_agent.toml — configuration for the PR-Agent AI code-review bot.
+#
+#
+# ⚠️  The project's coding rules are NOT in this file. They live in
+#     .ai/conventions/REVIEW_CONTEXT.md and reach the model via
+#     `repo_context_files` below.
+#
+# ⚠️  The OpenAI credential is supplied at runtime by the OPENAI_KEY repository secret.
+
+[config]
+model = "gpt-4o-mini"
+fallback_models = ["gpt-4o-mini"]
+
+repo_context_files = [".ai/conventions/REVIEW_CONTEXT.md"]
+repo_context_from_default_branch = true
+repo_context_max_lines = 500
+
+[ignore]
+# Defence in depth. Most of these paths are already covered by .gitignore and
+# should never appear in a diff; listing them keeps reviews scoped if something
+# generated is committed by accident, and documents what is deliberately not reviewed.
+glob = [
+    "**/.venv/**",
+    "**/node_modules/**",
+    "frontend/dist/**",
+    "backend/app/frontend/**",
+    "infra/cdk.out/**",
+    "**/*.lock",
+    "frontend/package-lock.json",
+]
+
+[pr_reviewer]
+require_tests_review = true
+extra_instructions = '''
+- Treat the repository context files as authoritative. They override any generic
+  best-practice advice you would otherwise give, and the numbered rules in
+  REVIEW_CONTEXT.md take priority over everything else. When a rule is violated,
+  name it.
+- The owner is learning Python. When you flag a Python issue, explain it in one
+  plain sentence and show the idiomatic fix.
+- Do not report: formatting, import order, or style nits already enforced by
+  Ruff, ESLint or Prettier; praise; restatements of what the diff already shows;
+  speculative refactors with no concrete defect behind them; unlikely edge cases.
+- frontend/ has no test runner configured — never ask for frontend tests.
+'''
+
+[pr_code_suggestions]
+num_code_suggestions = 6
+suggestions_score_threshold = 7
+extra_instructions = '''
+- Suggestions must be idiomatic for the stack of the file being changed (see the
+  repository context files) and must run against it.
+- Do not propose new libraries or dependencies.
+- Do not suggest edits to Alembic migrations that are already merged.
+- Prefer the smallest change that fixes a concrete defect.
+'''
+
+[pr_description]
+extra_instructions = '''
+- State which of backend/, frontend/, infra/ or .github/ the pull request touches.
+- Call out schema changes (a new Alembic migration), new settings or environment
+  variables, new dependencies, and any change to the public REST API under /api/v1.
+'''
