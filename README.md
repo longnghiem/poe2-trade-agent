@@ -25,8 +25,15 @@ uv sync
 uv run fastapi dev app/main.py
 ```
 
-`uv sync` installs Python 3.14 and the backend's libraries into `backend/.venv`. The API runs at
-http://localhost:8000/api/v1, and the interactive API docs (Swagger) are at http://localhost:8000/api/docs.
+`uv sync` installs Python 3.14 and the backend's libraries into `backend/.venv`. 
+- The API runs at: http://localhost:8000/api/v1
+- Interactive API docs (Swagger) are at: http://localhost:8000/api/docs.
+
+Running tests
+
+```bash
+uv run pytest
+```
 
 ## License
 

@@ -9,3 +9,6 @@ frontend/dist/
 backend/app/frontend/
 infra/cdk.out/
 .idea/
+
+# Personal notes, not part of the project
+STUDY_NOTEBOOK.md
