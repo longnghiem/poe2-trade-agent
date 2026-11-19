@@ -7,14 +7,26 @@ browse, copy and upvote them.
 
 ## Local development
 
-Requirements: Docker with Docker Compose.
+Requirements: Docker with Docker Compose, and [uv](https://docs.astral.sh/uv/).
+
+### Database
 
 ```bash
-cp .env.example .env
 docker compose up -d
 ```
 
 This starts a local PostgreSQL database.
+
+### Backend
+
+```bash
+cd backend
+uv sync
+uv run fastapi dev app/main.py
+```
+
+`uv sync` installs Python 3.14 and the backend's libraries into `backend/.venv`. The API runs at
+http://localhost:8000/api/v1, and the interactive API docs (Swagger) are at http://localhost:8000/api/docs.
 
 ## License
 

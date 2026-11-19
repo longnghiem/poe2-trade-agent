@@ -1,0 +1,8 @@
+[project]
+name = "app"
+version = "0.1.0"
+description = "API for saving Path of Exile 2 trade searches as templates"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi[standard]>=0.141.1,<1.0.0",
+]
