@@ -8,4 +8,4 @@ node_modules/
 frontend/dist/
 backend/app/frontend/
 infra/cdk.out/
-.idea
+.idea/
