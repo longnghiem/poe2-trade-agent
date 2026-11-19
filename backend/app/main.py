@@ -3,9 +3,10 @@
 from fastapi import FastAPI
 
 from app.api.main import api_router
+from app.core.config import settings
 
 app = FastAPI(
-    title="poe2-trade-agent",
+    title=settings.PROJECT_NAME,
     openapi_url="/api/v1/openapi.json",
     docs_url="/api/docs",
 )
