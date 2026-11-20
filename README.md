@@ -34,6 +34,13 @@ uv run pytest
 uv run ruff format .
 ```
 
+### Database migrations
+
+```bash
+uv run alembic revision --autogenerate -m "add user table"  # draft a new migration from the models
+uv run alembic upgrade head                                 # update the database to the latest migration
+```
+
 ## License
 
 [MIT](LICENSE)
