@@ -21,18 +21,17 @@ This starts a local PostgreSQL database.
 
 ```bash
 cd backend
-uv sync
 uv run fastapi dev app/main.py
 ```
 
-`uv sync` installs Python 3.14 and the backend's libraries into `backend/.venv`. 
 - The API runs at: http://localhost:8000/api/v1
 - Interactive API docs (Swagger) are at: http://localhost:8000/api/docs.
 
-Running tests
+Running tests and linter
 
 ```bash
 uv run pytest
+uv run ruff format .
 ```
 
 ## License

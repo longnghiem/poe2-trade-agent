@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 
+
 @pytest.fixture
 def client() -> Generator[TestClient]:
     """A test client that sends requests straight to the app, with no real server running."""
