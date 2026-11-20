@@ -10,12 +10,15 @@ browse, copy and upvote them.
 Requirements: Docker with Docker Compose, and [uv](https://docs.astral.sh/uv/).
 
 ### Database
-
+- Starts a local PostgreSQL database.
 ```bash
 docker compose up -d
 ```
 
-This starts a local PostgreSQL database.
+- Shows the columns and indexes of the `user` table. Use `\dt` to list all tables.
+```bash
+docker compose exec db psql -U poe2_trade_agent -d poe2_trade_templates -c '\d "user"'
+```
 
 ### Backend
 
