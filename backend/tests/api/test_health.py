@@ -15,12 +15,12 @@ def testHealth_ReturnsOk(client: TestClient) -> None:
 
 
 def testHealth_DatabaseDown_Returns500() -> None:
-    unreachable_enine = create_engine(
+    unreachable_engine = create_engine(
         "postgresql+psycopg://user:password@localhost:1/none"
     )
 
     def get_unreachable_db() -> Generator[Session]:
-        with Session(unreachable_enine) as session:
+        with Session(unreachable_engine) as session:
             yield session
 
     app.dependency_overrides[get_db] = get_unreachable_db
