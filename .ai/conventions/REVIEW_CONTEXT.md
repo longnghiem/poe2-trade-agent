@@ -29,17 +29,20 @@ database and security, `app/models/` holds tables and request/response shapes,
 
 ## Numbered rules — flag violations explicitly and name the rule
 
-1. **Test naming.** Tests are named `test<Feature>_<Condition>`, e.g.
-   `testRegister_DuplicateUsername`. Sentence-style names are wrong.
+1. **Test naming.** Python tests follow PEP 8 snake_case: `test_<feature>_<condition>`,
+   optionally ending with the expected result, e.g. `test_register_duplicate_username` or
+   `test_user_duplicate_username_is_rejected`. camelCase names such as
+   `testRegister_DuplicateUsername` are wrong (Ruff's `N` rules report them).
 2. **Comments never mention planning files.** No `TASK_XX`, `PLAN`, `RESEARCH`,
    spike results or section numbers in code, comments or docstrings; state the fact itself.
 3. **TSDoc links.** Every code object a TSDoc/JSDoc comment mentions is linked with
    `{@link Name}`, and the name is in scope (type-only import if needed).
 4. **No new dependencies without approval.** Any new entry in `pyproject.toml` or
    `package.json` must be called out; the owner approves each library.
-5. **Settings come from `app/core/config.py`** (pydantic-settings). No
-   `os.environ` / `os.getenv` elsewhere. Every new setting is added to
-   `.env.example` with a dummy value.
+5. **App settings come from `app/core/config.py`** (pydantic-settings). No
+   `os.environ` / `os.getenv` in `backend/app/`. Test setup (`backend/tests/conftest.py`)
+   and `infra/` (the CDK reads `CDK_DEFAULT_ACCOUNT`) may read the environment directly.
+   Every new app setting is added to `.env.example` with a dummy value.
 6. **Type hints everywhere.** Every function has parameter and return types; the
    code must pass `mypy --strict`. No bare `Any` without a reason.
 7. **Routes stay thin.** A route validates input, calls a service or query, and
