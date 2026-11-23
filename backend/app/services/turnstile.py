@@ -1,6 +1,10 @@
+import logging
+
 import httpx
 
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 
@@ -14,6 +18,7 @@ def verify_turnstile_token(token: str) -> bool:
             data={"secret": settings.TURNSTILE_SECRET_KEY, "response": token},
             timeout=10,
         )
-    except httpx.HTTPError:
+        return response.json().get("success") is True
+    except httpx.HTTPError, ValueError:
+        logger.warning("Could not verify the Turnstile token", exc_info=True)
         return False
-    return response.json().get("success") is True
