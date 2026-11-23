@@ -33,6 +33,7 @@ select = [
     "UP",      # pyupgrade: use modern Python syntax
     "ARG001",  # unused function arguments
     "T201",    # no print(); use logging
+    "N",       # pep8-naming: snake_case functions and variables, CamelCase classes
 ]
 ignore = [
     "E501",  # long lines: ruff format handles line length
