@@ -20,6 +20,7 @@ else:
         database=f"{dev_url.database}_test"
     ).render_as_string(hide_password=False)
 
+from app.api.deps import get_turnstile_verifier  # noqa: E402
 from app.core.db import engine  # noqa: E402
 from app.main import app  # noqa: E402
 
@@ -55,5 +56,8 @@ def db() -> Generator[Session]:
 @pytest.fixture
 def client() -> Generator[TestClient]:
     """A test client that sends requests straight to the app, with no real server running."""
+    # Every test passes the human check, so no test calls Cloudflare.
+    app.dependency_overrides[get_turnstile_verifier] = lambda: lambda token: True
     with TestClient(app) as test_client:
         yield test_client
+    app.dependency_overrides.clear()

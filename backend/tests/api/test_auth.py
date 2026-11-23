@@ -1,7 +1,9 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 
+from app.api.deps import get_turnstile_verifier
 from app.core.security import read_access_token, verify_password
+from app.main import app
 from app.models import User
 
 REGISTER_URL = "/api/v1/auth/register"
@@ -63,6 +65,20 @@ def test_register_short_password_returns_422(client: TestClient, db: Session) ->
     response = client.post(REGISTER_URL, json={"username": "exile", "password": "abc"})
 
     assert response.status_code == 422
+    assert db.exec(select(User)).first() is None
+
+
+def test_register_failed_human_check_returns_400(
+    client: TestClient, db: Session
+) -> None:
+    app.dependency_overrides[get_turnstile_verifier] = lambda: lambda token: False
+
+    response = client.post(
+        REGISTER_URL, json={"username": "exile", "password": "long enough"}
+    )
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Human check failed"}
     assert db.exec(select(User)).first() is None
 
 

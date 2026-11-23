@@ -1,5 +1,5 @@
 import uuid
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -9,6 +9,7 @@ from sqlmodel import Session
 from app.core.db import engine
 from app.core.security import read_access_token
 from app.models import User
+from app.services.turnstile import verify_turnstile_token
 
 
 def get_db() -> Generator[Session]:
@@ -33,3 +34,10 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+def get_turnstile_verifier() -> Callable[[str], bool]:
+    return verify_turnstile_token
+
+
+TurnstileVerifierDep = Annotated[Callable[[str], bool], Depends(get_turnstile_verifier)]

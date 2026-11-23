@@ -55,6 +55,14 @@ database and security, `app/models/` holds tables and request/response shapes,
    during render via previous-prop comparison, or remount with a `key`.
 10. **Nav matching compares path SEGMENTS.** `pathname.startsWith(linkTo)` is a
     defect — split on `/` and compare segment by segment.
+11. **Log failures; never swallow an error silently.** Backend: each module uses
+    `logger = logging.getLogger(__name__)`, never `print()`. An `except` that carries on
+    must log a warning with `exc_info=True` (or re-raise), and a failed call to an
+    outside service (Cloudflare, poe.ninja, the mod list download) must be logged.
+    Logging is configured once per entry point, not in library code. Frontend: use
+    `createLogger(scope)` from `src/lib/logger.ts`, never `console.*`. Don't log normal
+    outcomes (404, wrong password, a failed human check), and never log passwords,
+    tokens or secrets.
 
 ## Repository invariants
 
