@@ -31,3 +31,10 @@ class UserPublic(SQLModel):
 
     id: uuid.UUID
     username: str
+
+
+class Token(SQLModel):
+    """What the login route returns."""
+
+    access_token: str
+    token_type: str = "bearer"
