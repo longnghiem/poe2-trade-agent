@@ -18,6 +18,9 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str = "poe2-trade-agent"
     DATABASE_URL: str
+    JWT_SECRET: str
+    # The browser stores the token in localStorage.
+    JWT_EXPIRE_DAYS: int = 7
 
 
 settings = Settings()  # type: ignore[call-arg]  # pydantic-settings fills DATABASE_URL from the environment
