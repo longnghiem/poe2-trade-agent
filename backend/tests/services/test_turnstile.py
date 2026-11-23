@@ -48,3 +48,18 @@ def test_verify_turnstile_token_error_page_returns_false(
     )
 
     assert verify_turnstile_token("some-token") is False
+
+
+def test_verify_turnstile_token_wrong_secret_logs_warning(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    monkeypatch.setattr(
+        httpx,
+        "post",
+        lambda *args, **kwargs: httpx.Response(
+            200, json={"success": False, "error-codes": ["invalid-input-secret"]}
+        ),
+    )
+
+    assert verify_turnstile_token("some-token") is False
+    assert "Cloudflare rejected the Turnstile secret key" in caplog.text
