@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     JWT_SECRET: str
     # The browser stores the token in localStorage.
     JWT_EXPIRE_DAYS: int = 7
+    TURNSTILE_SECRET_KEY: str
 
 
 settings = Settings()  # type: ignore[call-arg]  # pydantic-settings fills DATABASE_URL from the environment

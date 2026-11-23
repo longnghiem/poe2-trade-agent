@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select
 
-from app.api.deps import SessionDep
+from app.api.deps import SessionDep, TurnstileVerifierDep
 from app.core.security import create_access_token, hash_password, verify_password
 from app.models import Token, User, UserPublic, UserRegister
 
@@ -14,7 +14,13 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post(
     "/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED
 )
-def register(body: UserRegister, session: SessionDep) -> User:
+def register(
+    body: UserRegister, session: SessionDep, verify_turnstile: TurnstileVerifierDep
+) -> User:
+    if not verify_turnstile(body.turnstile_token):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Human check failed"
+        )
     existing = session.exec(select(User).where(User.username == body.username)).first()
     if existing is not None:
         raise HTTPException(
