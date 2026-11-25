@@ -8,7 +8,7 @@ from sqlmodel import Session
 
 from app.core.db import engine
 from app.core.security import read_access_token
-from app.models import User
+from app.models import Template, User
 from app.services.turnstile import verify_turnstile_token
 
 
@@ -34,6 +34,21 @@ def get_current_user(session: SessionDep, token: TokenDep) -> User:
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+def get_owned_template_by_id(
+    template_id: uuid.UUID, session: SessionDep, current_user: CurrentUser
+) -> Template:
+    template = session.get(Template, template_id)
+    # Someone else's template gives the same answer, so nobody can find out that it exists.
+    if template is None or template.owner_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Template not found"
+        )
+    return template
+
+
+OwnedTemplate = Annotated[Template, Depends(get_owned_template_by_id)]
 
 
 def get_turnstile_verifier() -> Callable[[str], bool]:
