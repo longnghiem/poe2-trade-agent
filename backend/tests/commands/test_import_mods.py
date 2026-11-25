@@ -18,15 +18,37 @@ LIFE_LINE = json.dumps(
         },
     }
 )
+OFFICIAL_STATS = json.dumps(
+    {
+        "result": [
+            {
+                "id": "pseudo",
+                "entries": [
+                    {"id": "pseudo.pseudo_total_life", "text": "+# total maximum Life"}
+                ],
+            },
+            {
+                "id": "explicit",
+                "entries": [
+                    {"id": "explicit.stat_3299347043", "text": "# to maximum Life"}
+                ],
+            },
+        ]
+    }
+)
 NO_IDS_LINE = json.dumps({"ref": "Grants Skill: Parry", "trade": {"ids": None}})
 
 
 def fake_download(monkeypatch: pytest.MonkeyPatch, status_code: int, text: str) -> None:
-    """Make httpx.get return this answer instead of calling GitHub."""
-    response = httpx.Response(
-        status_code, text=text, request=httpx.Request("GET", command.STATS_URL)
-    )
-    monkeypatch.setattr(httpx, "get", lambda *args, **kwargs: response)
+    """Make httpx.get answer from here instead of GitHub; STATS_URL gets this answer."""
+
+    def fake_get(url: str, **_: object) -> httpx.Response:
+        request = httpx.Request("GET", url)
+        if url == command.OFFICIAL_STATS_URL:
+            return httpx.Response(200, text=OFFICIAL_STATS, request=request)
+        return httpx.Response(status_code, text=text, request=request)
+
+    monkeypatch.setattr(httpx, "get", fake_get)
 
 
 def test_parse_stats_lines_returns_one_mod_per_trade_id() -> None:
@@ -50,6 +72,40 @@ def test_parse_stats_lines_removes_duplicate_ids() -> None:
     assert len(mods) == 2
 
 
+def test_parse_stats_lines_skips_mods_with_a_choice() -> None:
+    ids = {"enchant": ["enchant.stat_2954116742"]}
+    line = json.dumps({"ref": "Allocates #", "trade": {"ids": ids, "option": True}})
+
+    assert command.parse_stats_lines([line]) == []
+
+
+def test_merge_official_stats_adds_missing_mod() -> None:
+    official = {"enchant.stat_2954116742|57190": "Allocates Doomsayer"}
+
+    [mod] = command.merge_official_stats([], official)
+
+    assert mod.id == "enchant.stat_2954116742|57190"
+    assert (mod.text, mod.source) == ("Allocates Doomsayer", "enchant")
+    assert mod.position == 0
+
+
+@pytest.mark.parametrize(
+    ("official_text", "expected"),
+    [
+        ("# to Armour (Local)", "# to Armour (Local)"),
+        ("# to Armour in your Maps", "# to Armour"),  # an older wording: keep ours
+    ],
+)
+def test_merge_official_stats_takes_only_a_suffix(
+    official_text: str, expected: str
+) -> None:
+    mods = [Mod(id="explicit.stat_1", text="# to Armour", source="explicit")]
+
+    [mod] = command.merge_official_stats(mods, {"explicit.stat_1": official_text})
+
+    assert mod.text == expected
+
+
 def test_import_mods_replaces_old_rows(
     db: Session, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -61,9 +117,10 @@ def test_import_mods_replaces_old_rows(
     command.import_mods()
 
     mods = db.exec(select(Mod).order_by(Mod.id)).all()
-    assert [(mod.id, mod.text) for mod in mods] == [
-        ("explicit.stat_3299347043", "# to maximum Life"),
-        ("implicit.stat_3299347043", "# to maximum Life"),
+    assert [(mod.id, mod.text, mod.position) for mod in mods] == [
+        ("explicit.stat_3299347043", "# to maximum Life", 1),
+        ("implicit.stat_3299347043", "# to maximum Life", None),
+        ("pseudo.pseudo_total_life", "+# total maximum Life", 0),
     ]
 
 

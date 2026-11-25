@@ -7,6 +7,8 @@ class Mod(SQLModel, table=True):
     id: str = Field(primary_key=True, max_length=100)
     text: str = Field(max_length=300)
     source: str = Field(max_length=30)
+    # Place in the official trade site's stat list; None if the mod isn't in our copy of it.
+    position: int | None = None
 
 
 class ModPublic(SQLModel):
