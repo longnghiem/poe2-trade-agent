@@ -44,6 +44,17 @@ uv run alembic revision --autogenerate -m "add user table"  # draft a new migrat
 uv run alembic upgrade head                                 # update the database to the latest migration
 ```
 
+### Mod list
+
+Downloads the list of trade mods into the `mod` table. Run it once, and again after game patches.
+
+```bash
+uv run python -m app.commands.import_mods  # local
+docker compose -f compose.prod.yml exec backend python -m app.commands.import_mods  # production server
+```
+
+- Mod data: [Exiled Exchange 2](https://github.com/Kvan7/Exiled-Exchange-2), MIT, © 2020 Alexander Drozdov.
+
 ## License
 
 [MIT](LICENSE)

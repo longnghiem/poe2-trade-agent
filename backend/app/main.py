@@ -1,19 +1,12 @@
 """Creates the FastAPI application object that the server runs."""
 
-import logging
-
 from fastapi import FastAPI
 
 from app.api.main import api_router
 from app.core.config import settings
+from app.core.logging_config import setup_logging
 
-# Print the app's own log lines (info and above) with time, level and module name.
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-)
-# httpx logs every request at info level; keep only its warnings and errors.
-logging.getLogger("httpx").setLevel(logging.WARNING)
+setup_logging()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
