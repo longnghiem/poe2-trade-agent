@@ -12,12 +12,20 @@ BODY_ARMOUR = {
     "folder": "Warrior",
     "tags": ["life"],
     "category": "armour.chest",
-    "filters": [
+    "stat_groups": [
         {
-            "stat_id": "explicit.stat_3299347043",
-            "label": "# to maximum Life",
-            "min": 200.0,
+            "type": "and",
+            "min": None,
             "max": None,
+            "mod_filters": [
+                {
+                    "stat_id": "explicit.stat_3299347043",
+                    "label": "# to maximum Life",
+                    "min": 200.0,
+                    "max": None,
+                    "weight": None,
+                }
+            ],
         }
     ],
     "status_option": "online",
@@ -104,17 +112,17 @@ def test_get_template_returns_template(client: TestClient) -> None:
 def test_update_template_replaces_fields(client: TestClient) -> None:
     headers = register_and_login(client)
     template = create(client, headers)
-    new_filter = {"stat_id": "a", "label": "b", "min": None, "max": 1.0}
+    new_group = {"type": "count", "min": 1.0, "max": None, "mod_filters": []}
 
     client.put(
         f"{TEMPLATES_URL}/{template['id']}",
-        json={"name": "New name", "filters": [new_filter], "is_public": True},
+        json={"name": "New name", "stat_groups": [new_group], "is_public": True},
         headers=headers,
     )
 
     saved = client.get(f"{TEMPLATES_URL}/{template['id']}", headers=headers).json()
     assert saved["name"] == "New name"
-    assert saved["filters"] == [new_filter]
+    assert saved["stat_groups"] == [new_group]
     assert saved["is_public"] is True
     assert saved["folder"] is None  # not sent, so back to the default
     assert saved["created_at"] == template["created_at"]
