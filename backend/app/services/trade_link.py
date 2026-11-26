@@ -2,7 +2,7 @@ import json
 from typing import Any
 from urllib.parse import quote
 
-from app.models import TradeSearch
+from app.models import StatGroup, TradeSearch
 
 TRADE_SEARCH_URL = "https://www.pathofexile.com/trade2/search/poe2"
 
@@ -12,20 +12,26 @@ def build_trade_request(search: TradeSearch) -> dict[str, Any]:
     return {
         "query": {
             "status": {"option": search.status_option},
-            "stats": [{"type": "and", "filters": _stat_filters(search)}],
+            "stats": [_stat_group(group) for group in search.stat_groups],
             "filters": _item_filters(search),
         },
         "sort": {"price": "asc"},
     }
 
 
-def _stat_filters(search: TradeSearch) -> list[dict[str, Any]]:
-    """One entry per mod: its stat id, and its min and max without empty values."""
+def _stat_group(group: StatGroup) -> dict[str, Any]:
+    """One group: its type, its min and max, and its mods, without empty values."""
     stat_filters: list[dict[str, Any]] = []
-    for mod_filter in search.filters:
-        min_max = mod_filter.model_dump(include={"min", "max"}, exclude_none=True)
-        stat_filters.append({"id": mod_filter.stat_id, "value": min_max})
-    return stat_filters
+    for mod_filter in group.mod_filters:
+        value = mod_filter.model_dump(
+            include={"min", "max", "weight"}, exclude_none=True
+        )
+        stat_filters.append({"id": mod_filter.stat_id, "value": value})
+    return {
+        "type": group.type,
+        "value": group.model_dump(include={"min", "max"}, exclude_none=True),
+        "filters": stat_filters,
+    }
 
 
 def _item_filters(search: TradeSearch) -> dict[str, Any]:

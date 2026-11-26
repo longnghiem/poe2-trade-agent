@@ -1,16 +1,37 @@
 import json
 from urllib.parse import parse_qs, urlsplit
 
-from app.models import ModFilter, TradeSearch
+from app.models import ModFilter, StatGroup, TradeSearch
 from app.services.trade_link import build_trade_request, build_trade_url
 
 BODY_ARMOUR = TradeSearch(
     category="armour.chest",
-    filters=[
-        ModFilter(
-            stat_id="pseudo.pseudo_total_life", label="+# total maximum Life", min=200
+    stat_groups=[
+        StatGroup(
+            mod_filters=[
+                ModFilter(
+                    stat_id="pseudo.pseudo_total_life",
+                    label="+# total maximum Life",
+                    min=200,
+                ),
+                ModFilter(stat_id="explicit.stat_1", label="Other", min=1, max=5),
+            ]
         ),
-        ModFilter(stat_id="explicit.stat_1", label="Other", min=1, max=5),
+        StatGroup(
+            type="count",
+            min=2,
+            mod_filters=[
+                ModFilter(stat_id="explicit.stat_2", label="Cold", min=30),
+                ModFilter(stat_id="explicit.stat_3", label="Fire", min=30),
+            ],
+        ),
+        StatGroup(
+            type="weight",
+            min=100,
+            mod_filters=[
+                ModFilter(stat_id="explicit.stat_4", label="Life", weight=1.5)
+            ],
+        ),
     ],
     max_price=5,
     price_currency="divine",
@@ -24,11 +45,25 @@ def test_build_trade_request_full_search() -> None:
             "stats": [
                 {
                     "type": "and",
+                    "value": {},
                     "filters": [
                         {"id": "pseudo.pseudo_total_life", "value": {"min": 200}},
                         {"id": "explicit.stat_1", "value": {"min": 1, "max": 5}},
                     ],
-                }
+                },
+                {
+                    "type": "count",
+                    "value": {"min": 2},
+                    "filters": [
+                        {"id": "explicit.stat_2", "value": {"min": 30}},
+                        {"id": "explicit.stat_3", "value": {"min": 30}},
+                    ],
+                },
+                {
+                    "type": "weight",
+                    "value": {"min": 100},
+                    "filters": [{"id": "explicit.stat_4", "value": {"weight": 1.5}}],
+                },
             ],
             "filters": {
                 "type_filters": {"filters": {"category": {"option": "armour.chest"}}},
@@ -44,10 +79,16 @@ def test_build_trade_request_leaves_out_empty_values() -> None:
         stat_id="enchant.stat_2954116742|57190", label="Allocates Doomsayer"
     )
 
-    query = build_trade_request(TradeSearch(filters=[doomsayer]))["query"]
+    query = build_trade_request(
+        TradeSearch(stat_groups=[StatGroup(mod_filters=[doomsayer])])
+    )["query"]
 
-    assert query["stats"][0]["filters"] == [
-        {"id": "enchant.stat_2954116742|57190", "value": {}}
+    assert query["stats"] == [
+        {
+            "type": "and",
+            "value": {},
+            "filters": [{"id": "enchant.stat_2954116742|57190", "value": {}}],
+        }
     ]
     assert query["filters"] == {}
 

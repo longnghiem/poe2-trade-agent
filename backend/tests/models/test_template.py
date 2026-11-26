@@ -12,12 +12,20 @@ BODY_ARMOUR = {
     "folder": "Warrior",
     "tags": ["life", "cold"],
     "category": "armour.chest",
-    "filters": [
+    "stat_groups": [
         {
-            "stat_id": "explicit.stat_3299347043",
-            "label": "# to maximum Life",
-            "min": 200.0,
+            "type": "and",
+            "min": None,
             "max": None,
+            "mod_filters": [
+                {
+                    "stat_id": "explicit.stat_3299347043",
+                    "label": "# to maximum Life",
+                    "min": 200.0,
+                    "max": None,
+                    "weight": None,
+                }
+            ],
         }
     ],
     "status_option": "online",
@@ -56,7 +64,7 @@ def test_template_only_name_uses_defaults(db: Session) -> None:
 
     db.refresh(template)
     assert template.tags == []
-    assert template.filters == []
+    assert template.stat_groups == []
     assert template.status_option == "securable"
     assert template.is_public is False
 
@@ -73,7 +81,9 @@ def test_template_unknown_owner_is_rejected(db: Session) -> None:
     [
         {"name": ""},
         {"status_option": "sometimes"},
-        {"filters": [{"stat_id": "explicit.stat_3299347043"}]},  # no label
+        # no label
+        {"stat_groups": [{"mod_filters": [{"stat_id": "explicit.stat_3299347043"}]}]},
+        {"stat_groups": [{"type": "not"}]},  # a group type we don't support
     ],
 )
 def test_template_in_invalid_value_is_rejected(change: dict[str, object]) -> None:

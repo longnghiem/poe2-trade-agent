@@ -21,7 +21,7 @@ class Template(SQLModel, table=True):
     folder: str | None = Field(default=None, max_length=50)
     tags: list[str] = Field(default_factory=list, sa_type=JSONB)
     category: str | None = Field(default=None, max_length=50)
-    filters: list[dict[str, Any]] = Field(default_factory=list, sa_type=JSONB)
+    stat_groups: list[dict[str, Any]] = Field(default_factory=list, sa_type=JSONB)
     status_option: str = Field(default="securable", max_length=20)
     max_price: float | None = None
     price_currency: str | None = Field(default=None, max_length=30)
