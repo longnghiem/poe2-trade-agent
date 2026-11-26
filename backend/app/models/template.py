@@ -46,3 +46,9 @@ class TemplatePublic(TemplateIn):
     owner_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+
+
+class LibraryTemplatePublic(TemplatePublic):
+    """A public template as the library shows it, with its owner's name."""
+
+    owner_username: str

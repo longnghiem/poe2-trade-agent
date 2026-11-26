@@ -2,7 +2,12 @@
 app.models registers all tables on SQLModel.metadata."""
 
 from app.models.mod import Mod, ModPublic
-from app.models.template import Template, TemplateIn, TemplatePublic
+from app.models.template import (
+    LibraryTemplatePublic,
+    Template,
+    TemplateIn,
+    TemplatePublic,
+)
 from app.models.trade import (
     ModFilter,
     ParsedTradeUrl,
@@ -35,4 +40,5 @@ __all__ = [
     "Template",
     "TemplateIn",
     "TemplatePublic",
+    "LibraryTemplatePublic",
 ]
