@@ -3,7 +3,13 @@ app.models registers all tables on SQLModel.metadata."""
 
 from app.models.mod import Mod, ModPublic
 from app.models.template import Template, TemplateIn, TemplatePublic
-from app.models.trade import ModFilter, StatusOption, TradeSearch
+from app.models.trade import (
+    ModFilter,
+    StatusOption,
+    TradeLinkRequest,
+    TradeLinkResponse,
+    TradeSearch,
+)
 from app.models.user import Token, User, UserPublic, UserRegister
 
 __all__ = [
@@ -16,6 +22,8 @@ __all__ = [
     "ModFilter",
     "StatusOption",
     "TradeSearch",
+    "TradeLinkRequest",
+    "TradeLinkResponse",
     "Template",
     "TemplateIn",
     "TemplatePublic",

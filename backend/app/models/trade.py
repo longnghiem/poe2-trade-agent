@@ -22,3 +22,16 @@ class TradeSearch(SQLModel):
     status_option: StatusOption = "securable"
     max_price: float | None = None
     price_currency: str | None = Field(default=None, max_length=30)
+
+
+class TradeLinkRequest(SQLModel):
+    """A league and the search to open in it."""
+
+    league: str = Field(min_length=1, max_length=100)
+    search: TradeSearch
+
+
+class TradeLinkResponse(SQLModel):
+    """A link that opens the search on the official trade site."""
+
+    url: str
