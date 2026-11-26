@@ -7,7 +7,7 @@ browse, copy and upvote them.
 
 ## Local development
 
-Requirements: Docker with Docker Compose, and [uv](https://docs.astral.sh/uv/).
+Requirements: Docker with Docker Compose, [uv](https://docs.astral.sh/uv/), and [Node.js](https://nodejs.org/) 20.19 or newer.
 
 ### Database
 - Starts a local PostgreSQL database.
@@ -74,6 +74,24 @@ docker compose -f compose.prod.yml exec backend python -m app.commands.import_mo
 ```
 
 - Mod data: [Exiled Exchange 2](https://github.com/Kvan7/Exiled-Exchange-2), MIT, © 2020 Alexander Drozdov.
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+- The page runs at: http://localhost:5173
+
+Checks (all must pass before a commit):
+
+```bash
+npm run lint          # oxlint
+npm run format:check  # Prettier; `npm run format` fixes the files
+npm run build         # type check and production build into dist/
+```
 
 ## License
 
