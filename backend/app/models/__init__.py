@@ -20,6 +20,7 @@ from app.models.trade import (
     TradeSearch,
 )
 from app.models.user import Token, User, UserPublic, UserRegister
+from app.models.vote import Vote
 
 __all__ = [
     "User",
@@ -41,4 +42,5 @@ __all__ = [
     "TemplateIn",
     "TemplatePublic",
     "LibraryTemplatePublic",
+    "Vote",
 ]

@@ -30,6 +30,26 @@ uv run fastapi dev app/main.py
 - The API runs at: http://localhost:8000/api/v1
 - Interactive API docs (Swagger) are at: http://localhost:8000/api/docs.
 
+### API overview
+
+All routes start with `/api/v1`. 🔒 = needs a login token (`Authorization: Bearer <token>`).
+
+| Method | Route | What it does |
+|---|---|---|
+| GET | `/health` | Checks that the API and the database run |
+| POST | `/auth/register` | Creates an account |
+| POST | `/auth/login` | Logs in and returns a token |
+| GET | `/users/current_user` 🔒 | The logged-in user |
+| GET | `/mods?q=` 🔒 | Searches trade mods by text |
+| GET | `/leagues` 🔒 | Trade league names, from poe.ninja |
+| GET, POST | `/templates` 🔒 | Lists or creates your templates |
+| GET, PUT, DELETE | `/templates/{id}` 🔒 | Reads, replaces or deletes one of your templates |
+| POST | `/trade-links` 🔒 | Builds a trade site link from a search |
+| POST | `/trade-links/parse` 🔒 | Reads a pasted trade site link into a search |
+| GET | `/library?q=&category=&tag=&sort=` 🔒 | Public templates of everyone; `sort` is `new` or `votes` |
+| POST | `/library/{id}/copy` 🔒 | Copies a public template to your templates |
+| POST, DELETE | `/library/{id}/vote` 🔒 | Upvotes a public template, or removes your vote |
+
 Running tests and linter
 
 ```bash
