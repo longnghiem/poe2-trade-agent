@@ -52,3 +52,5 @@ class LibraryTemplatePublic(TemplatePublic):
     """A public template as the library shows it, with its owner's name."""
 
     owner_username: str
+    vote_count: int
+    voted_by_me: bool
