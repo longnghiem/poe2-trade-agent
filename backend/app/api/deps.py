@@ -51,6 +51,19 @@ def get_owned_template_by_id(
 OwnedTemplate = Annotated[Template, Depends(get_owned_template_by_id)]
 
 
+def get_public_template_by_id(template_id: uuid.UUID, session: SessionDep) -> Template:
+    template = session.get(Template, template_id)
+    # A private template gives the same answer, so nobody can find out that it exists.
+    if template is None or not template.is_public:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Template not found"
+        )
+    return template
+
+
+PublicTemplate = Annotated[Template, Depends(get_public_template_by_id)]
+
+
 def get_turnstile_verifier() -> Callable[[str], bool]:
     return verify_turnstile_token
 
