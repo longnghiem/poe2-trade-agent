@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Template } from '../api/schemas'
+import { categoryLabel, currencyLabel } from '../lib/tradeOptions'
 import {
   cardActionsCls,
   cardCls,
@@ -28,9 +29,9 @@ export function TemplateCard({ template, actions }: { template: Template; action
         {template.is_public && <span className={publicBadgeCls}>Public</span>}
       </div>
       <p className={mutedTextCls}>
-        {template.category ?? 'Any item'}
+        {categoryLabel(template.category)}
         {template.max_price !== null &&
-          ` · up to ${template.max_price} ${template.price_currency ?? ''}`}
+          ` · up to ${template.max_price} ${currencyLabel(template.price_currency)}`}
       </p>
       {modLabels.length > 0 && (
         <p>

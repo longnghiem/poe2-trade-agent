@@ -10,6 +10,19 @@ export function fetchTemplates(): Promise<Template[]> {
   return apiFetch('/templates', z.array(templateSchema))
 }
 
+/** Calls `GET /templates/{id}`: one of your templates. */
+export function fetchTemplateById(id: string): Promise<Template> {
+  return apiFetch(`/templates/${id}`, templateSchema)
+}
+
+/** Calls `POST /templates`. */
+export function createTemplate(data: TemplateIn): Promise<Template> {
+  return apiFetch('/templates', templateSchema, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
 /** Calls `PUT /templates/{id}`, which replaces every field, so send the whole template. */
 export function updateTemplate(id: string, data: TemplateIn): Promise<Template> {
   return apiFetch(`/templates/${id}`, templateSchema, {
