@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { linkCls, mutedTextCls, pageTitleCls } from '../styles'
+import { mutedTextCls, pageTitleCls, textLinkCls } from '../styles'
 
 export function NotFoundPage() {
   return (
@@ -7,7 +7,7 @@ export function NotFoundPage() {
       <h2 className={pageTitleCls}>Page not found</h2>
       <p className={mutedTextCls}>
         There's no page at this address.{' '}
-        <Link className={linkCls} to="/">
+        <Link className={textLinkCls} to="/">
           Go to my templates
         </Link>
       </p>
