@@ -28,7 +28,7 @@ BODY_ARMOUR = {
             ],
         }
     ],
-    "status_option": "online",
+    "status_option": "available",
     "max_price": 5.0,
     "price_currency": "divine",
     "is_public": True,

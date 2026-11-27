@@ -31,6 +31,13 @@ export const submitButtonCls =
 export const secondaryButtonCls =
   'rounded border border-zinc-700 px-3 py-1 text-sm hover:bg-zinc-800'
 
+// Template form
+export const templateFormCls = 'flex max-w-lg flex-col gap-4'
+export const formRowCls = 'grid grid-cols-2 gap-4'
+export const checkboxLabelCls = 'flex items-center gap-2 text-sm'
+export const hintTextCls = 'text-xs text-zinc-400'
+export const formActionsCls = 'flex items-center gap-2'
+
 // Template cards
 export const folderTitleCls = 'mt-6 mb-2 text-lg font-semibold text-zinc-300'
 export const cardListCls = 'grid gap-3 sm:grid-cols-2'

@@ -60,7 +60,7 @@ def test_read_trade_url_reads_our_own_link() -> None:
                 mod_filters=[ModFilter(stat_id="b", label="b", weight=1.5)],
             ),
         ],
-        status_option="online",
+        status_option="available",
         max_price=50,
         price_currency="exalted",
     )
@@ -73,7 +73,7 @@ def test_read_trade_url_reads_our_own_link() -> None:
 
 def test_query_to_search_skips_what_a_template_cannot_store() -> None:
     query = {
-        "status": {"option": "sometimes"},
+        "status": {"option": "online"},
         "stats": [
             {"type": "and", "filters": [{"id": "a"}, {"id": "b", "disabled": True}]},
             {"type": "not", "filters": [{"id": "c"}]},

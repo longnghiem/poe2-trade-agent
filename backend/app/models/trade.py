@@ -2,7 +2,9 @@ from typing import Literal
 
 from sqlmodel import Field, SQLModel
 
-StatusOption = Literal["available", "securable", "online", "any"]
+# The trade site's "Instant Buyout and In Person", "Instant Buyout" and "Any"; its two
+# "In Person" options are not offered.
+StatusOption = Literal["available", "securable", "any"]
 StatGroupType = Literal["and", "count", "weight"]
 
 

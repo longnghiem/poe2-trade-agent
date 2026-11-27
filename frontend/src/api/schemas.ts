@@ -39,7 +39,7 @@ export type StatGroup = z.infer<typeof statGroupSchema>
 export const tradeSearchSchema = z.object({
   category: z.string().nullable(),
   stat_groups: z.array(statGroupSchema),
-  status_option: z.enum(['available', 'securable', 'online', 'any']),
+  status_option: z.enum(['available', 'securable', 'any']),
   max_price: z.number().nullable(),
   price_currency: z.string().nullable(),
 })
