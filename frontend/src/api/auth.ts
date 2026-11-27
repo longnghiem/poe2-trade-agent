@@ -9,11 +9,18 @@ export function loginUser(username: string, password: string): Promise<Token> {
   })
 }
 
-/** Calls `POST /auth/register`; it returns the new user, not a token, so log in afterwards. */
-export function registerUser(username: string, password: string): Promise<User> {
+/**
+ * Calls `POST /auth/register` with the token of the human check. It returns the new user, not a
+ * token, so log in afterwards.
+ */
+export function registerUser(
+  username: string,
+  password: string,
+  turnstileToken: string,
+): Promise<User> {
   return apiFetch('/auth/register', userSchema, {
     method: 'POST',
-    body: JSON.stringify({ username, password, turnstile_token: '' }),
+    body: JSON.stringify({ username, password, turnstile_token: turnstileToken }),
   })
 }
 

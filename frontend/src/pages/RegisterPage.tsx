@@ -3,6 +3,7 @@ import { type SubmitEvent, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { loginUser, registerUser } from '../api/auth'
 import { useAuth } from '../auth/useAuth'
+import { TurnstileWidget } from '../components/TurnstileWidget'
 import {
   formCls,
   inputCls,
@@ -20,11 +21,19 @@ export function RegisterPage() {
   const { isLoggedIn, loginWithToken } = useAuth()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState('')
+  // A new key draws a new human check widget.
+  const [widgetKey, setWidgetKey] = useState(0)
   const registerMutation = useMutation({
     mutationFn: async () => {
-      await registerUser(username, password)
+      await registerUser(username, password, turnstileToken)
       const token = await loginUser(username, password)
       loginWithToken(token.access_token)
+    },
+    // The backend has used the token up, so a new try needs a new check.
+    onError: () => {
+      setTurnstileToken('')
+      setWidgetKey((key) => key + 1)
     },
   })
 
@@ -67,10 +76,15 @@ export function RegisterPage() {
             maxLength={128}
           />
         </label>
+        <TurnstileWidget key={widgetKey} onToken={setTurnstileToken} />
         {registerMutation.error && (
           <p className={statusErrorTextCls}>{registerMutation.error.message}</p>
         )}
-        <button className={submitButtonCls} type="submit" disabled={registerMutation.isPending}>
+        <button
+          className={submitButtonCls}
+          type="submit"
+          disabled={registerMutation.isPending || !turnstileToken}
+        >
           Create account
         </button>
         <p className={mutedTextCls}>
